@@ -55,6 +55,11 @@ class _AdminStructureScreenState extends State<AdminStructureScreen>
     }
   }
 
+  static String _subjectAbbreviation(String? code) {
+    if (code == null || code.isEmpty) return 'S';
+    return code.length >= 2 ? code.substring(0, 2) : code;
+  }
+
   Future<void> _addProgram() async {
     final nameCtrl = TextEditingController();
     final codeCtrl = TextEditingController();
@@ -234,10 +239,7 @@ class _AdminStructureScreenState extends State<AdminStructureScreen>
                       leading: CircleAvatar(
                         backgroundColor: AppTheme.accentColor,
                         child: Text(
-                          () {
-                            final code = s['code']?.toString() ?? '';
-                            return code.length >= 2 ? code.substring(0, 2) : (code.isEmpty ? 'S' : code);
-                          }(),
+                          _subjectAbbreviation(s['code']?.toString()),
                           style: const TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ),

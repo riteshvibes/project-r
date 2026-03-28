@@ -315,7 +315,7 @@ CREATE TABLE IF NOT EXISTS timetable_entries (
   subject_id    UUID        NOT NULL REFERENCES subjects(id)  ON DELETE RESTRICT,
   teacher_id    UUID        NOT NULL REFERENCES profiles(id)  ON DELETE RESTRICT,
   day_of_week   SMALLINT    NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
-                                          -- ISO-style: 0=Sunday, 1=Monday … 6=Saturday
+                                          -- PostgreSQL/JavaScript convention: 0=Sunday, 1=Monday … 6=Saturday
                                           -- Typical university week uses 1 (Mon) – 5 (Fri)
   period_number SMALLINT    NOT NULL CHECK (period_number BETWEEN 1 AND 8),
   room          TEXT,

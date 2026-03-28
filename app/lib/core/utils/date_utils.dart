@@ -14,7 +14,8 @@ class AppDateUtils {
   static DateTime parseDbDate(String date) => DateTime.parse(date);
   
   static String getDayName(int dayOfWeek) {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    // Matches PostgreSQL/JavaScript convention used in the database: 0=Sunday, 1=Monday … 6=Saturday
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return days[dayOfWeek.clamp(0, 6)];
   }
 

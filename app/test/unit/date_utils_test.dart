@@ -17,15 +17,16 @@ void main() {
   });
 
   group('AppDateUtils.getDayName', () {
-    test('returns correct day names', () {
-      expect(AppDateUtils.getDayName(0), equals('Monday'));
-      expect(AppDateUtils.getDayName(4), equals('Friday'));
-      expect(AppDateUtils.getDayName(6), equals('Sunday'));
+    test('returns correct day names (0=Sunday convention)', () {
+      expect(AppDateUtils.getDayName(0), equals('Sunday'));
+      expect(AppDateUtils.getDayName(1), equals('Monday'));
+      expect(AppDateUtils.getDayName(5), equals('Friday'));
+      expect(AppDateUtils.getDayName(6), equals('Saturday'));
     });
 
     test('clamps out-of-range values', () {
-      expect(AppDateUtils.getDayName(-1), equals('Monday'));
-      expect(AppDateUtils.getDayName(10), equals('Sunday'));
+      expect(AppDateUtils.getDayName(-1), equals('Sunday'));
+      expect(AppDateUtils.getDayName(10), equals('Saturday'));
     });
   });
 
