@@ -1,0 +1,81 @@
+name: Flutter Web Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Flutter Web
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        working-directory: app
+        run: flutter pub get
+
+      - name: Analyze code
+        working-directory: app
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run unit tests
+        working-directory: app
+        run: flutter test test/unit/
+
+      - name: Run widget tests
+        working-directory: app
+        run: flutter test test/widget/
+
+      - name: Build web (release)
+        working-directory: app
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          flutter build web \
+            --release \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --web-renderer=canvaskit
+
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-web-build
+          path: app/build/web/
+          retention-days: 30
+
+  # Uncomment and configure for Cloudflare Pages deployment
+  # deploy:
+  #   name: Deploy to Cloudflare Pages
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main'
+  #   steps:
+  #     - name: Download web build
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: flutter-web-build
+  #         path: dist/
+  #     - name: Deploy to Cloudflare Pages
+  #       uses: cloudflare/pages-action@v1
+  #       with:
+  #         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  #         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  #         projectName: university-portal
+  #         directory: dist/

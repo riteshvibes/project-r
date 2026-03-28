@@ -234,7 +234,10 @@ class _AdminStructureScreenState extends State<AdminStructureScreen>
                       leading: CircleAvatar(
                         backgroundColor: AppTheme.accentColor,
                         child: Text(
-                          s['code']?.toString().substring(0, 2) ?? 'S',
+                          () {
+                            final code = s['code']?.toString() ?? '';
+                            return code.length >= 2 ? code.substring(0, 2) : (code.isEmpty ? 'S' : code);
+                          }(),
                           style: const TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ),

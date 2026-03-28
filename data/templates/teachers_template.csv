@@ -1,0 +1,4 @@
+roll_number,name,email,phone,department,password
+T001,Dr. Priya Kumar,priya.kumar@university.edu,9876500001,CSE,TempPass@123
+T002,Prof. Rajesh Sharma,rajesh.sharma@university.edu,9876500002,ECE,TempPass@123
+T003,Dr. Sunita Verma,sunita.verma@university.edu,9876500003,CSE,TempPass@123

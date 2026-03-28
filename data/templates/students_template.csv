@@ -1,0 +1,5 @@
+roll_number,name,email,phone,program,branch,batch,section,semester,password
+2024CS001,John Smith,john.smith@example.com,9876543210,B.Tech,CSE,2024,A,1,TempPass@123
+2024CS002,Jane Doe,jane.doe@example.com,9876543211,B.Tech,CSE,2024,A,1,TempPass@123
+2024CS003,Bob Johnson,bob.johnson@example.com,9876543212,B.Tech,CSE,2024,B,1,TempPass@123
+2024EC001,Alice Brown,alice.brown@example.com,9876543213,B.Tech,ECE,2024,A,1,TempPass@123

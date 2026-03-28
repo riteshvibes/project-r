@@ -170,8 +170,11 @@ class _AdminNoticesScreenState extends State<AdminNoticesScreen> {
                       child: ListTile(
                         title: Text(n['title'] ?? ''),
                         subtitle: Text(
-                          '${n['content']?.toString().substring(0, (n['content']?.toString().length ?? 0).clamp(0, 80))}...'
-                          '\nTarget: ${n['target_role']} | ${AppDateUtils.getRelativeTime(DateTime.parse(n['created_at']))}',
+                          () {
+                            final c = n['content']?.toString() ?? '';
+                            final preview = c.length > 80 ? '${c.substring(0, 80)}...' : c;
+                            return '$preview\nTarget: ${n['target_role']} | ${AppDateUtils.getRelativeTime(DateTime.parse(n['created_at']))}';
+                          }(),
                         ),
                         isThreeLine: true,
                         trailing: Row(
