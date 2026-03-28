@@ -27,6 +27,9 @@ $$;
 -- ===========================================================================
 -- 1. PROFILES
 --    One row per auth.users entry; role drives all RLS decisions.
+--    FK columns (program_id, branch_id, batch_id, section_id) are the
+--    canonical references; the TEXT fields are kept as denormalised
+--    display-cache for quick reads and are populated via triggers or app logic.
 -- ===========================================================================
 CREATE TABLE IF NOT EXISTS profiles (
   id            UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -37,7 +40,12 @@ CREATE TABLE IF NOT EXISTS profiles (
   email         TEXT        NOT NULL UNIQUE,
   phone         TEXT,
   photo_url     TEXT,
-  -- Academic placement (populated for students; nullable for staff)
+  -- Normalised FK references (preferred for joins / RLS)
+  program_id    UUID        REFERENCES programs(id)  ON DELETE SET NULL,
+  branch_id     UUID        REFERENCES branches(id)  ON DELETE SET NULL,
+  batch_id      UUID        REFERENCES batches(id)   ON DELETE SET NULL,
+  section_id    UUID        REFERENCES sections(id)  ON DELETE SET NULL,
+  -- Denormalised text cache (convenient for display without extra joins)
   program       TEXT,                                -- e.g. "B.Tech"
   branch        TEXT,                                -- e.g. "CSE"
   batch         TEXT,                                -- e.g. "2022-26"
@@ -50,6 +58,10 @@ CREATE TABLE IF NOT EXISTS profiles (
 CREATE INDEX IF NOT EXISTS idx_profiles_role        ON profiles (role);
 CREATE INDEX IF NOT EXISTS idx_profiles_roll_number ON profiles (roll_number);
 CREATE INDEX IF NOT EXISTS idx_profiles_email       ON profiles (email);
+CREATE INDEX IF NOT EXISTS idx_profiles_program_id  ON profiles (program_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_branch_id   ON profiles (branch_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_batch_id    ON profiles (batch_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_section_id  ON profiles (section_id);
 CREATE INDEX IF NOT EXISTS idx_profiles_batch       ON profiles (batch);
 CREATE INDEX IF NOT EXISTS idx_profiles_section     ON profiles (section);
 
@@ -166,15 +178,15 @@ CREATE INDEX IF NOT EXISTS idx_enrollments_course_offering_id ON enrollments (co
 CREATE TABLE IF NOT EXISTS attendance_sessions (
   id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   course_offering_id  UUID        NOT NULL REFERENCES course_offerings(id) ON DELETE CASCADE,
-  date                DATE        NOT NULL,
+  session_date        DATE        NOT NULL,          -- renamed from 'date' (reserved keyword)
   period_number       SMALLINT    NOT NULL CHECK (period_number BETWEEN 1 AND 8),
   marked_by           UUID        NOT NULL REFERENCES profiles(id)         ON DELETE RESTRICT,
   created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE (course_offering_id, date, period_number)
+  UNIQUE (course_offering_id, session_date, period_number)
 );
 
 CREATE INDEX IF NOT EXISTS idx_attendance_sessions_course_offering_id ON attendance_sessions (course_offering_id);
-CREATE INDEX IF NOT EXISTS idx_attendance_sessions_date               ON attendance_sessions (date);
+CREATE INDEX IF NOT EXISTS idx_attendance_sessions_session_date       ON attendance_sessions (session_date);
 CREATE INDEX IF NOT EXISTS idx_attendance_sessions_marked_by          ON attendance_sessions (marked_by);
 
 
@@ -225,6 +237,8 @@ CREATE TABLE IF NOT EXISTS results (
   academic_year   TEXT        NOT NULL,
   marks_obtained  NUMERIC(5,2) NOT NULL CHECK (marks_obtained >= 0),
   max_marks       NUMERIC(5,2) NOT NULL CHECK (max_marks > 0),
+  -- Ensure obtained marks never exceed the maximum
+  CONSTRAINT chk_marks_not_exceed_max CHECK (marks_obtained <= max_marks),
   grade           TEXT,
   is_published    BOOLEAN     NOT NULL DEFAULT FALSE,
   published_at    TIMESTAMPTZ,
@@ -301,7 +315,8 @@ CREATE TABLE IF NOT EXISTS timetable_entries (
   subject_id    UUID        NOT NULL REFERENCES subjects(id)  ON DELETE RESTRICT,
   teacher_id    UUID        NOT NULL REFERENCES profiles(id)  ON DELETE RESTRICT,
   day_of_week   SMALLINT    NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
-                                          -- 0 = Sunday … 6 = Saturday
+                                          -- ISO-style: 0=Sunday, 1=Monday … 6=Saturday
+                                          -- Typical university week uses 1 (Mon) – 5 (Fri)
   period_number SMALLINT    NOT NULL CHECK (period_number BETWEEN 1 AND 8),
   room          TEXT,
   academic_year TEXT        NOT NULL,

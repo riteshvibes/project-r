@@ -386,8 +386,8 @@ ALTER TABLE notices ENABLE ROW LEVEL SECURITY;
 -- Authenticated users see published notices that target them:
 --   target_role = 'all'                          → everyone
 --   target_role matches the caller's role        → role-specific
--- Optional finer filters: program / branch / section stored on the caller's
--- profile must match if set on the notice.
+-- Optional finer filters: the FK columns on the caller's profile
+-- must match the notice's target if set.
 CREATE POLICY "notices: read published"
   ON notices FOR SELECT
   USING (
@@ -398,41 +398,25 @@ CREATE POLICY "notices: read published"
       OR (
         -- Role filter
         (target_role = 'all' OR target_role = get_user_role())
-        -- If program filter is set, caller's program must match
+        -- If program filter is set, caller's program_id must match
         AND (
           target_program_id IS NULL
           OR target_program_id = (
-            SELECT p2.id
-            FROM   programs p2
-            JOIN   profiles pr ON pr.program = p2.name
-            WHERE  pr.id = auth.uid()
-            LIMIT  1
+            SELECT program_id FROM profiles WHERE id = auth.uid()
           )
         )
-        -- If branch filter is set, caller's branch must match
+        -- If branch filter is set, caller's branch_id must match
         AND (
           target_branch_id IS NULL
           OR target_branch_id = (
-            SELECT b.id
-            FROM   branches b
-            JOIN   profiles pr ON pr.branch = b.name
-            WHERE  pr.id = auth.uid()
-            LIMIT  1
+            SELECT branch_id FROM profiles WHERE id = auth.uid()
           )
         )
-        -- If section filter is set, caller's section must match
+        -- If section filter is set, caller's section_id must match
         AND (
           target_section_id IS NULL
           OR target_section_id = (
-            SELECT s.id
-            FROM   sections  s
-            JOIN   batches   bt ON bt.id = s.batch_id
-            JOIN   branches  br ON br.id = bt.branch_id
-            JOIN   profiles  pr ON pr.section = s.name
-                                AND pr.batch   = bt.name
-                                AND pr.branch  = br.name
-            WHERE  pr.id = auth.uid()
-            LIMIT  1
+            SELECT section_id FROM profiles WHERE id = auth.uid()
           )
         )
       )

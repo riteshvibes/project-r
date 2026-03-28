@@ -124,7 +124,9 @@ ON CONFLICT (code) DO NOTHING;
 -- ── Admin ───────────────────────────────────────────────────────────────────
 -- Auth user: admin@uni.edu  (create in dashboard first)
 INSERT INTO profiles
-  (id, role, name, email, phone, program, branch, batch, section, semester)
+  (id, role, name, email, phone,
+   program_id, branch_id, batch_id, section_id,
+   program, branch, batch, section, semester)
 VALUES
   (
     'aaaaaaaa-0000-0000-0000-000000000001',  -- REPLACE with real auth.users UUID
@@ -132,6 +134,7 @@ VALUES
     'Portal Admin',
     'admin@uni.edu',
     '+91-9000000001',
+    NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL
   )
 ON CONFLICT (id) DO NOTHING;
@@ -139,21 +142,26 @@ ON CONFLICT (id) DO NOTHING;
 -- ── Teachers ────────────────────────────────────────────────────────────────
 -- Auth users: teacher1@uni.edu, teacher2@uni.edu, teacher3@uni.edu
 INSERT INTO profiles
-  (id, role, name, email, phone, program, branch, batch, section, semester)
+  (id, role, name, email, phone,
+   program_id, branch_id, batch_id, section_id,
+   program, branch, batch, section, semester)
 VALUES
   (
     'bbbbbbbb-0000-0000-0000-000000000001',  -- REPLACE
     'teacher', 'Dr. Priya Sharma', 'teacher1@uni.edu', '+91-9000000002',
+    NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL
   ),
   (
     'bbbbbbbb-0000-0000-0000-000000000002',  -- REPLACE
     'teacher', 'Prof. Arjun Mehta', 'teacher2@uni.edu', '+91-9000000003',
+    NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL
   ),
   (
     'bbbbbbbb-0000-0000-0000-000000000003',  -- REPLACE
     'teacher', 'Dr. Kavitha Nair', 'teacher3@uni.edu', '+91-9000000004',
+    NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL
   )
 ON CONFLICT (id) DO NOTHING;
@@ -161,51 +169,84 @@ ON CONFLICT (id) DO NOTHING;
 -- ── Students — CSE 2022-26 Section A ────────────────────────────────────────
 INSERT INTO profiles
   (id, role, roll_number, name, email, phone,
+   program_id, branch_id, batch_id, section_id,
    program, branch, batch, section, semester)
 VALUES
   (
     'cccccccc-0000-0000-0000-000000000001',  -- REPLACE
     'student', '22CS001', 'Aarav Patel', 'aarav.patel@student.uni.edu',
-    '+91-9000000010', 'Bachelor of Technology', 'CSE', '2022-26', 'A', 5
+    '+91-9000000010',
+    '00000000-0000-0000-0000-000000000001',  -- B.Tech
+    '00000000-0000-0000-0001-000000000001',  -- CSE
+    '00000000-0000-0000-0002-000000000001',  -- 2022-26
+    '00000000-0000-0000-0003-000000000001',  -- Section A
+    'Bachelor of Technology', 'CSE', '2022-26', 'A', 5
   ),
   (
     'cccccccc-0000-0000-0000-000000000002',  -- REPLACE
     'student', '22CS002', 'Bhavna Iyer', 'bhavna.iyer@student.uni.edu',
-    '+91-9000000011', 'Bachelor of Technology', 'CSE', '2022-26', 'A', 5
+    '+91-9000000011',
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0001-000000000001',
+    '00000000-0000-0000-0002-000000000001',
+    '00000000-0000-0000-0003-000000000001',
+    'Bachelor of Technology', 'CSE', '2022-26', 'A', 5
   ),
   (
     'cccccccc-0000-0000-0000-000000000003',  -- REPLACE
     'student', '22CS003', 'Chirag Desai', 'chirag.desai@student.uni.edu',
-    '+91-9000000012', 'Bachelor of Technology', 'CSE', '2022-26', 'A', 5
+    '+91-9000000012',
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0001-000000000001',
+    '00000000-0000-0000-0002-000000000001',
+    '00000000-0000-0000-0003-000000000001',
+    'Bachelor of Technology', 'CSE', '2022-26', 'A', 5
   )
 ON CONFLICT (id) DO NOTHING;
 
 -- ── Students — CSE 2022-26 Section B ────────────────────────────────────────
 INSERT INTO profiles
   (id, role, roll_number, name, email, phone,
+   program_id, branch_id, batch_id, section_id,
    program, branch, batch, section, semester)
 VALUES
   (
     'cccccccc-0000-0000-0000-000000000004',  -- REPLACE
     'student', '22CS051', 'Divya Reddy', 'divya.reddy@student.uni.edu',
-    '+91-9000000013', 'Bachelor of Technology', 'CSE', '2022-26', 'B', 5
+    '+91-9000000013',
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0001-000000000001',
+    '00000000-0000-0000-0002-000000000001',
+    '00000000-0000-0000-0003-000000000002',  -- Section B
+    'Bachelor of Technology', 'CSE', '2022-26', 'B', 5
   ),
   (
     'cccccccc-0000-0000-0000-000000000005',  -- REPLACE
     'student', '22CS052', 'Eshan Gupta', 'eshan.gupta@student.uni.edu',
-    '+91-9000000014', 'Bachelor of Technology', 'CSE', '2022-26', 'B', 5
+    '+91-9000000014',
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0001-000000000001',
+    '00000000-0000-0000-0002-000000000001',
+    '00000000-0000-0000-0003-000000000002',  -- Section B
+    'Bachelor of Technology', 'CSE', '2022-26', 'B', 5
   )
 ON CONFLICT (id) DO NOTHING;
 
 -- ── Student — ECE 2022-26 Section A ─────────────────────────────────────────
 INSERT INTO profiles
   (id, role, roll_number, name, email, phone,
+   program_id, branch_id, batch_id, section_id,
    program, branch, batch, section, semester)
 VALUES
   (
     'cccccccc-0000-0000-0000-000000000006',  -- REPLACE
     'student', '22EC001', 'Farhan Khan', 'farhan.khan@student.uni.edu',
-    '+91-9000000015', 'Bachelor of Technology', 'ECE', '2022-26', 'A', 5
+    '+91-9000000015',
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0001-000000000002',  -- ECE
+    '00000000-0000-0000-0002-000000000003',  -- ECE 2022-26
+    '00000000-0000-0000-0003-000000000004',  -- ECE Section A
+    'Bachelor of Technology', 'ECE', '2022-26', 'A', 5
   )
 ON CONFLICT (id) DO NOTHING;
 
@@ -313,7 +354,9 @@ ON CONFLICT DO NOTHING;
 
 -- ===========================================================================
 -- TIMETABLE ENTRIES
--- Days: 1=Monday … 5=Friday  |  Periods: 1-8  (each 1 hour)
+-- day_of_week: 0=Sunday, 1=Monday … 6=Saturday  (ISO-style)
+-- University working week uses 1 (Monday) through 5 (Friday).
+-- Periods: 1-8  (each slot 1 hour)
 -- ===========================================================================
 INSERT INTO timetable_entries
   (section_id, subject_id, teacher_id, day_of_week, period_number,
@@ -400,7 +443,7 @@ ON CONFLICT DO NOTHING;
 
 -- Session: Data Structures, CSE-A, 2024-07-15, Period 1
 INSERT INTO attendance_sessions
-  (id, course_offering_id, date, period_number, marked_by)
+  (id, course_offering_id, session_date, period_number, marked_by)
 VALUES
   (
     '00000000-0000-0000-0006-000000000001',
