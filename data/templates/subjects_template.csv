@@ -1,0 +1,11 @@
+code,name,credits,description
+CS101,Mathematics-I,4,Engineering Mathematics covering Calculus and Linear Algebra
+CS102,Physics,3,Engineering Physics
+CS103,Introduction to Programming,3,Fundamentals of programming using C
+CS201,Data Structures,4,Linear and non-linear data structures with algorithms
+CS202,Digital Electronics,3,Boolean algebra and digital circuit design
+CS301,Algorithms,4,Design and analysis of algorithms
+CS302,Database Management Systems,4,Relational databases SQL and NoSQL
+CS401,Computer Networks,4,OSI model protocols and network programming
+CS402,Operating Systems,4,Process management memory and file systems
+CS501,Software Engineering,3,SDLC methodologies and project management
