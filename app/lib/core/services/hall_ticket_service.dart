@@ -97,4 +97,15 @@ class HallTicketService {
     final results = await query.order('created_at', ascending: false);
     return (results as List).cast<Map<String, dynamic>>();
   }
+
+  /// Look up a student's UUID by roll number (admin use only).
+  static Future<String?> getStudentIdByRollNumber(String rollNumber) async {
+    final result = await _client
+        .from('profiles')
+        .select('id')
+        .eq('roll_number', rollNumber)
+        .eq('role', 'student')
+        .maybeSingle();
+    return result?['id'] as String?;
+  }
 }
